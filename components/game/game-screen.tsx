@@ -12,7 +12,10 @@ import {
 import { createRandomOrder, quoteSale, type Order } from "@/lib/game/order";
 import { comboBonus, nextCombo } from "@/lib/game/combo";
 import { getDifficultyBand } from "@/lib/game/difficulty";
+import { getGrade } from "@/lib/game/grade";
+import { loadBestScore, saveBestScoreIfHigher } from "@/lib/game/best-score";
 import { Tray } from "@/components/game/tray";
+import { ResultScreen } from "@/components/game/result-screen";
 
 const TRAY_KEYS = TRAY_LAYOUT_ROWS.flat();
 const TICK_MS = 100;
@@ -23,6 +26,10 @@ type GameState = {
   order: Order;
   revenue: number;
   combo: number;
+  maxCombo: number;
+  perfectCount: number;
+  goodCount: number;
+  burntCount: number;
   elapsedMs: number;
 };
 
@@ -38,6 +45,10 @@ function createInitialState(): GameState {
     order: createRandomOrder(),
     revenue: 0,
     combo: 0,
+    maxCombo: 0,
+    perfectCount: 0,
+    goodCount: 0,
+    burntCount: 0,
     elapsedMs: 0,
   };
 }
@@ -52,21 +63,25 @@ function tickGameState(state: GameState): GameState {
 
   const nextTrays: Record<number, TrayData> = {};
   let combo = state.combo;
+  let burntCount = state.burntCount;
 
   for (const key of TRAY_KEYS) {
     const previousTray = state.trays[key];
     const nextTray = tickTray(previousTray, TICK_MS, band.timing);
     if (previousTray.state !== "BURNT" && nextTray.state === "BURNT") {
       combo = nextCombo(combo, "BURNT");
+      burntCount += 1;
     }
     nextTrays[key] = nextTray;
   }
+
+  const maxCombo = Math.max(state.maxCombo, combo);
 
   const readyKeys = TRAY_KEYS.filter((key) => nextTrays[key].state === "READY");
   const quote = quoteSale(state.order, readyKeys.length);
 
   if (!quote.canSell) {
-    return { ...state, trays: nextTrays, combo, elapsedMs };
+    return { ...state, trays: nextTrays, combo, maxCombo, burntCount, elapsedMs };
   }
 
   const soldTrays = { ...nextTrays };
@@ -75,16 +90,24 @@ function tickGameState(state: GameState): GameState {
   }
 
   return {
+    ...state,
     trays: soldTrays,
     order: createRandomOrder(band.minOrderQuantity, band.maxOrderQuantity),
     revenue: state.revenue + quote.revenue + comboBonus(combo),
     combo,
+    maxCombo,
+    burntCount,
     elapsedMs,
   };
 }
 
 export function GameScreen() {
   const [gameState, setGameState] = useState<GameState>(createInitialState);
+  const [bestScore, setBestScore] = useState<number>(0);
+
+  useEffect(() => {
+    setBestScore(loadBestScore());
+  }, []);
 
   const handleActivate = useCallback((trayKey: number) => {
     setGameState((current) => {
@@ -104,6 +127,10 @@ export function GameScreen() {
         ...current,
         trays: { ...current.trays, [trayKey]: tray },
         combo,
+        maxCombo: Math.max(current.maxCombo, combo),
+        perfectCount:
+          current.perfectCount + (judgement === "PERFECT" ? 1 : 0),
+        goodCount: current.goodCount + (judgement === "GOOD" ? 1 : 0),
       };
     });
   }, []);
@@ -127,11 +154,48 @@ export function GameScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  const { trays, order, revenue, combo, elapsedMs } = gameState;
+  const isGameOver = gameState.elapsedMs >= GAME_DURATION_MS;
+
+  useEffect(() => {
+    if (isGameOver) {
+      setBestScore(saveBestScoreIfHigher(gameState.revenue));
+    }
+  }, [isGameOver, gameState.revenue]);
+
+  const handleRestart = useCallback(() => {
+    setGameState(createInitialState());
+  }, []);
+
+  const {
+    trays,
+    order,
+    revenue,
+    combo,
+    maxCombo,
+    perfectCount,
+    goodCount,
+    burntCount,
+    elapsedMs,
+  } = gameState;
   const remainingSeconds = Math.max(
     0,
     Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
   );
+
+  if (isGameOver) {
+    return (
+      <ResultScreen
+        revenue={revenue}
+        bestScore={bestScore}
+        grade={getGrade(revenue)}
+        perfectCount={perfectCount}
+        goodCount={goodCount}
+        burntCount={burntCount}
+        maxCombo={maxCombo}
+        onRestart={handleRestart}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
