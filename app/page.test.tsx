@@ -1,16 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, test } from "vitest";
 
 import Home from "@/app/page";
 
-test("홈 화면은 시작 안내 제목과 배포 링크를 보여준다", () => {
+test("시작 화면에서 게임 시작을 누르면 붕어빵 틀이 보이는 게임 화면으로 전환된다", () => {
   render(<Home />);
 
   expect(
-    screen.getByRole("heading", { level: 1, name: /To get started/i })
+    screen.getByRole("heading", { level: 1, name: "붕어빵 장인" })
   ).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: /Deploy Now/i })).toHaveAttribute(
-    "href",
-    expect.stringContaining("vercel.com/new")
-  );
+  expect(screen.queryByTestId("tray-1")).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "게임 시작" }));
+
+  expect(screen.getByTestId("tray-1")).toBeInTheDocument();
 });
