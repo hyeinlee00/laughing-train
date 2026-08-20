@@ -371,7 +371,7 @@ export function GameScreen() {
       data-testid="game-screen"
       className={`flex flex-1 flex-col gap-4 p-4 ${isShaking ? "[animation:screen-shake_0.3s_ease-in-out]" : ""}`}
     >
-      <div className="grid grid-cols-4 gap-2 text-center text-sm sm:text-base">
+      <div className="grid grid-cols-4 gap-2 text-center text-sm sm:text-base font-game text-amber-100 [text-shadow:0_1px_3px_rgb(0_0_0_/_80%)]">
         <div data-testid="stat-revenue">
           매출
           <br />₩{revenue}
