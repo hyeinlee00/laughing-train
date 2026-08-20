@@ -280,12 +280,18 @@ export function GameScreen() {
       const trayKey = Number(event.key);
       if (TRAY_KEYS.includes(trayKey)) {
         handleActivate(trayKey);
+        return;
+      }
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        handleDeliver();
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleActivate]);
+  }, [handleActivate, handleDeliver]);
 
   useEffect(() => {
     const interval = setInterval(() => {

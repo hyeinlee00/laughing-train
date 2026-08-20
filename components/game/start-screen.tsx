@@ -19,8 +19,10 @@ export function StartScreen({ onStart }: StartScreenProps) {
       <Button size="lg" onClick={onStart}>
         게임 시작
       </Button>
-      <p className="text-xs text-muted-foreground">
-        1~9 키 또는 마우스로 조작
+      <p className="text-xs font-medium text-foreground/80">
+        숫자 1~9 키: 화면과 같은 위치의 틀 조작
+        <br />
+        스페이스바 또는 손님 클릭: 완성품 배달
       </p>
     </div>
   );
