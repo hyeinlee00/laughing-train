@@ -11,16 +11,19 @@ import {
 } from "@/lib/game/tray-state";
 import { createRandomOrder, quoteSale, type Order } from "@/lib/game/order";
 import { comboBonus, nextCombo } from "@/lib/game/combo";
+import { getDifficultyBand } from "@/lib/game/difficulty";
 import { Tray } from "@/components/game/tray";
 
 const TRAY_KEYS = TRAY_LAYOUT_ROWS.flat();
 const TICK_MS = 100;
+const GAME_DURATION_MS = 60_000;
 
 type GameState = {
   trays: Record<number, TrayData>;
   order: Order;
   revenue: number;
   combo: number;
+  elapsedMs: number;
 };
 
 function createInitialTrays(): Record<number, TrayData> {
@@ -35,16 +38,24 @@ function createInitialState(): GameState {
     order: createRandomOrder(),
     revenue: 0,
     combo: 0,
+    elapsedMs: 0,
   };
 }
 
 function tickGameState(state: GameState): GameState {
+  if (state.elapsedMs >= GAME_DURATION_MS) {
+    return state;
+  }
+
+  const elapsedMs = Math.min(state.elapsedMs + TICK_MS, GAME_DURATION_MS);
+  const band = getDifficultyBand(Math.floor(elapsedMs / 1000));
+
   const nextTrays: Record<number, TrayData> = {};
   let combo = state.combo;
 
   for (const key of TRAY_KEYS) {
     const previousTray = state.trays[key];
-    const nextTray = tickTray(previousTray, TICK_MS);
+    const nextTray = tickTray(previousTray, TICK_MS, band.timing);
     if (previousTray.state !== "BURNT" && nextTray.state === "BURNT") {
       combo = nextCombo(combo, "BURNT");
     }
@@ -55,7 +66,7 @@ function tickGameState(state: GameState): GameState {
   const quote = quoteSale(state.order, readyKeys.length);
 
   if (!quote.canSell) {
-    return { ...state, trays: nextTrays, combo };
+    return { ...state, trays: nextTrays, combo, elapsedMs };
   }
 
   const soldTrays = { ...nextTrays };
@@ -65,9 +76,10 @@ function tickGameState(state: GameState): GameState {
 
   return {
     trays: soldTrays,
-    order: createRandomOrder(),
+    order: createRandomOrder(band.minOrderQuantity, band.maxOrderQuantity),
     revenue: state.revenue + quote.revenue + comboBonus(combo),
     combo,
+    elapsedMs,
   };
 }
 
@@ -76,7 +88,15 @@ export function GameScreen() {
 
   const handleActivate = useCallback((trayKey: number) => {
     setGameState((current) => {
-      const { tray, judgement } = activateTray(current.trays[trayKey]);
+      if (current.elapsedMs >= GAME_DURATION_MS) {
+        return current;
+      }
+
+      const band = getDifficultyBand(Math.floor(current.elapsedMs / 1000));
+      const { tray, judgement } = activateTray(
+        current.trays[trayKey],
+        band.timing
+      );
       const combo = judgement
         ? nextCombo(current.combo, judgement)
         : current.combo;
@@ -107,7 +127,11 @@ export function GameScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  const { trays, order, revenue, combo } = gameState;
+  const { trays, order, revenue, combo, elapsedMs } = gameState;
+  const remainingSeconds = Math.max(
+    0,
+    Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -119,7 +143,7 @@ export function GameScreen() {
         <div data-testid="stat-time">
           남은 시간
           <br />
-          60
+          {remainingSeconds}
         </div>
         <div data-testid="stat-combo">
           콤보

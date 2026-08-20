@@ -85,6 +85,38 @@ test("PERFECT 판정이 연속되면 콤보가 오르고, EARLY 판정에 초기
   vi.useRealTimers();
 });
 
+test("60초가 지나면 남은 시간이 0이 되고 더 이상 조작이 반영되지 않는다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  act(() => {
+    vi.advanceTimersByTime(60_000);
+  });
+
+  expect(screen.getByTestId("stat-time")).toHaveTextContent("0");
+
+  const tray1 = screen.getByTestId("tray-1");
+  fireEvent.click(tray1);
+  expect(tray1).toHaveAttribute("data-tray-state", "EMPTY");
+
+  vi.useRealTimers();
+});
+
+test("시간이 지날수록 남은 시간 표시가 줄어든다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  expect(screen.getByTestId("stat-time")).toHaveTextContent("60");
+
+  act(() => {
+    vi.advanceTimersByTime(25_000);
+  });
+
+  expect(screen.getByTestId("stat-time")).toHaveTextContent("35");
+
+  vi.useRealTimers();
+});
+
 test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
   vi.useFakeTimers();
   render(<GameScreen />);
