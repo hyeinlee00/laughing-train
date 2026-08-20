@@ -28,14 +28,14 @@ const JUDGEMENT_CLASSES: Record<FlipJudgement, string> = {
   LATE: "text-sm font-bold",
 };
 
-const STATE_CLASSES: Record<TrayState, string> = {
-  EMPTY: "bg-muted",
-  BATTER: "bg-amber-100 dark:bg-amber-950",
-  COOKING: "bg-amber-200 dark:bg-amber-900",
-  FLIP_READY: "bg-orange-300 dark:bg-orange-800",
-  COOKING_2: "bg-amber-300 dark:bg-amber-800",
-  READY: "bg-green-200 dark:bg-green-900",
-  BURNT: "bg-neutral-700 text-neutral-100",
+const STATE_TINT_CLASSES: Record<TrayState, string> = {
+  EMPTY: "",
+  BATTER: "ring-2 ring-amber-300/80",
+  COOKING: "ring-2 ring-amber-400/80",
+  FLIP_READY: "ring-4 ring-orange-400",
+  COOKING_2: "ring-2 ring-amber-500/80",
+  READY: "ring-2 ring-green-400",
+  BURNT: "ring-2 ring-neutral-900 brightness-75",
 };
 
 type TrayProps = {
@@ -60,9 +60,10 @@ export function Tray({
       data-tray-key={trayKey}
       data-tray-state={state}
       onClick={() => onActivate(trayKey)}
-      className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg border border-border text-foreground transition-transform duration-100 active:scale-95 ${STATE_CLASSES[state]}`}
+      style={{ backgroundImage: "url(/assets/bungeoppang/mold-slot.svg)" }}
+      className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg border border-border bg-cover bg-center text-neutral-100 transition-transform duration-100 active:scale-95 ${STATE_TINT_CLASSES[state]}`}
     >
-      <span className="text-xs text-muted-foreground">{trayKey}</span>
+      <span className="text-xs text-neutral-300">{trayKey}</span>
       <div className="flex min-h-0 flex-1 items-center justify-center">
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -75,7 +76,7 @@ export function Tray({
           <span className="text-2xl opacity-30">○</span>
         )}
       </div>
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-[10px] text-neutral-300">
         {STATE_LABELS[state]}
       </span>
       {lastJudgement && (

@@ -20,7 +20,7 @@ export default function Home() {
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="relative z-10 flex flex-1 flex-col bg-zinc-50/90 dark:bg-black/85">
+        <div className="relative z-10 flex flex-1 flex-col bg-zinc-50/45 text-foreground dark:bg-black/50">
           {screen === "start" ? (
             <StartScreen onStart={() => setScreen("playing")} />
           ) : (
