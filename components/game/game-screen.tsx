@@ -345,6 +345,15 @@ export function GameScreen() {
     previousComboRef.current = combo;
   }, [combo]);
 
+  const previousCustomerIdRef = useRef(customerId);
+  const [customerSwapKey, setCustomerSwapKey] = useState(0);
+  useEffect(() => {
+    if (customerId !== previousCustomerIdRef.current) {
+      setCustomerSwapKey((key) => key + 1);
+    }
+    previousCustomerIdRef.current = customerId;
+  }, [customerId]);
+
   const isShaking = elapsedMs < shakeUntilMs;
   const isCustomerHappy = elapsedMs < happyUntilMs;
   const isCustomerAngry = elapsedMs < angryUntilMs;
@@ -428,10 +437,11 @@ export function GameScreen() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            key={customerSwapKey}
             data-testid="customer-image"
             src={customerImageSrc}
             alt="손님"
-            className="h-36 w-auto object-contain sm:h-44"
+            className="h-36 w-auto object-contain sm:h-44 [animation:customer-enter_0.4s_ease-out]"
           />
         </button>
         {emptyStoragePopKey > 0 && (
