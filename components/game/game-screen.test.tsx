@@ -25,6 +25,19 @@ test("매출·남은 시간·콤보·현재 주문 표시 영역이 보인다", 
   expect(screen.getByTestId("stat-order")).toBeInTheDocument();
 });
 
+test("게임 시작 시 첫 주문은 0~20초 구간의 1~2개 범위를 따른다", () => {
+  for (let i = 0; i < 20; i += 1) {
+    const { unmount } = render(<GameScreen />);
+    const orderText = screen.getByTestId("stat-order").textContent ?? "";
+    const quantity = Number(orderText.replace(/[^0-9]/g, ""));
+
+    expect(quantity).toBeGreaterThanOrEqual(1);
+    expect(quantity).toBeLessThanOrEqual(2);
+
+    unmount();
+  }
+});
+
 test("마우스 클릭과 대응하는 키보드 숫자 입력이 같은 틀에 동일하게 동작한다", () => {
   render(<GameScreen />);
 

@@ -43,9 +43,13 @@ function createInitialTrays(): Record<number, TrayData> {
 }
 
 function createInitialState(): GameState {
+  const startingBand = getDifficultyBand(0);
   return {
     trays: createInitialTrays(),
-    order: createRandomOrder(),
+    order: createRandomOrder(
+      startingBand.minOrderQuantity,
+      startingBand.maxOrderQuantity
+    ),
     revenue: 0,
     combo: 0,
     maxCombo: 0,
