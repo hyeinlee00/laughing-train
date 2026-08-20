@@ -344,7 +344,7 @@ export function GameScreen() {
     : isCustomerAngry
       ? "angry"
       : "waiting";
-  const customerImageSrc = `/assets/customers/customer_0${customerId}_${customerMood}.svg`;
+  const customerImageSrc = `/assets/customers/customer_0${customerId}_${customerMood}.png`;
   const remainingSeconds = Math.max(
     0,
     Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
@@ -410,7 +410,7 @@ export function GameScreen() {
         </div>
       )}
 
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-2">
         <button
           type="button"
           data-testid="customer-deliver-button"
@@ -422,7 +422,7 @@ export function GameScreen() {
             data-testid="customer-image"
             src={customerImageSrc}
             alt="손님"
-            className="h-20 w-auto object-contain sm:h-24"
+            className="h-36 w-auto object-contain sm:h-44"
           />
         </button>
         {emptyStoragePopKey > 0 && (
@@ -436,7 +436,7 @@ export function GameScreen() {
         )}
         <div
           data-testid="storage-stack"
-          className="flex min-h-6 flex-wrap justify-center gap-1"
+          className="flex min-h-10 w-[70%] flex-wrap items-center justify-start gap-1 rounded-md border-2 border-dashed border-border bg-black/10 px-2 py-1"
         >
           {Array.from({ length: collectedCount }).map((_, index) => (
             // eslint-disable-next-line @next/next/no-img-element
@@ -445,13 +445,13 @@ export function GameScreen() {
               data-testid="storage-item"
               src="/assets/bungeoppang/ready.png"
               alt="완성된 붕어빵"
-              className="h-6 w-auto object-contain"
+              className="h-8 w-auto object-contain"
             />
           ))}
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="mx-auto flex w-[70%] flex-col gap-2">
         {TRAY_LAYOUT_ROWS.map((row, rowIndex) => (
           <div key={rowIndex} className="grid grid-cols-3 gap-2">
             {row.map((trayKey) => (
