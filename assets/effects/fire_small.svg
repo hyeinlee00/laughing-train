@@ -1,0 +1,6 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path id="flameOuter" d="M60,10 C78,30 90,52 88,74 C86,96 74,110 58,110 C42,110 30,96 30,76 C30,58 40,44 48,34 C44,48 50,58 58,50 C56,40 62,32 60,10 Z"
+        fill="#E8541C" stroke="#2A1810" stroke-width="4" stroke-linejoin="round" />
+  <path id="flameInner" d="M58,45 C68,58 74,70 72,82 C70,94 62,102 54,100 C46,98 40,90 42,80 C44,72 50,64 54,58 C52,66 56,70 58,64 C57,58 60,52 58,45 Z"
+        fill="#FFC93C" />
+</svg>

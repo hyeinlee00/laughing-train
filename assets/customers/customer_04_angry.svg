@@ -1,0 +1,29 @@
+<svg viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(80,215) scale(0.667) translate(-80,-215)">
+    <path id="hair" d="M80,20 C98,20 110,34 108,50 C104,44 94,40 80,40 C66,40 56,44 52,50 C50,34 62,20 80,20 Z"
+          fill="#1E1A16" stroke="#2A1810" stroke-width="3.5" stroke-linejoin="round" />
+
+    <path id="armL" d="M42,100 C33,104 28,120 32,140 C33,148 41,151 46,146 C42,130 42,114 47,100 Z"
+          fill="#F0B429" stroke="#2A1810" stroke-width="3.5" stroke-linejoin="round" />
+    <path id="armR" d="M118,100 C127,104 132,120 128,140 C127,148 119,151 114,146 C118,130 118,114 113,100 Z"
+          fill="#F0B429" stroke="#2A1810" stroke-width="3.5" stroke-linejoin="round" />
+
+    <path id="coat" d="M44,96 C44,84 60,78 80,78 C100,78 116,84 116,96 L118,150 C118,158 100,163 80,163 C60,163 42,158 42,150 Z"
+          fill="#F0B429" stroke="#2A1810" stroke-width="4" stroke-linejoin="round" />
+    <path d="M48,110 L112,110 M46,128 L114,128 M44,144 L116,144" stroke="#D89A16" stroke-width="2" opacity="0.6" fill="none" />
+
+    <path id="pants" d="M50,150 L110,150 L114,192 C114,198 100,202 92,198 L88,166 L72,166 L68,198 C60,202 46,198 46,192 Z"
+          fill="#3E6FB0" stroke="#2A1810" stroke-width="4" stroke-linejoin="round" />
+
+    <ellipse cx="66" cy="205" rx="13" ry="7" fill="#241A10" />
+    <ellipse cx="94" cy="205" rx="13" ry="7" fill="#241A10" />
+
+    <ellipse id="face" cx="80" cy="60" rx="30" ry="32" fill="#FFDCB8" stroke="#2A1810" stroke-width="4" />
+
+    <path d="M62,48 L74,54" fill="none" stroke="#2A1810" stroke-width="3" stroke-linecap="round" />
+    <path d="M98,48 L86,54" fill="none" stroke="#2A1810" stroke-width="3" stroke-linecap="round" />
+    <circle cx="70" cy="60" r="3" fill="#2A1810" />
+    <circle cx="90" cy="60" r="3" fill="#2A1810" />
+    <path d="M70,84 Q80,74 90,84" fill="none" stroke="#2A1810" stroke-width="2.8" stroke-linecap="round" />
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path id="tongueLeft" d="M26,54 C34,64 40,76 38,88 C36,98 28,105 20,103 C12,101 8,92 10,82 C12,73 18,64 24,58 C22,67 26,72 28,67 C26,62 26,58 26,54 Z"
+        fill="#E8541C" stroke="#2A1810" stroke-width="3.5" stroke-linejoin="round" />
+  <path id="tongueRight" d="M94,54 C86,64 80,76 82,88 C84,98 92,105 100,103 C108,101 112,92 110,82 C108,73 102,64 96,58 C98,67 94,72 92,67 C94,62 94,58 94,54 Z"
+        fill="#E8541C" stroke="#2A1810" stroke-width="3.5" stroke-linejoin="round" />
+
+  <path id="flameOuter" d="M60,4 C82,26 96,50 94,76 C92,100 78,116 60,116 C42,116 28,100 26,78 C26,58 38,42 47,30 C43,46 50,58 59,49 C57,38 63,28 60,4 Z"
+        fill="#E8541C" stroke="#2A1810" stroke-width="4.5" stroke-linejoin="round" />
+  <path id="flameMid" d="M58,40 C70,55 77,68 75,82 C73,96 63,105 53,102 C43,99 37,89 39,77 C41,68 48,58 53,51 C51,60 56,65 58,58 C56,52 60,46 58,40 Z"
+        fill="#FF8A1E" />
+  <path id="flameInner" d="M57,58 C64,68 68,76 66,86 C64,94 57,99 51,97 C45,95 41,88 43,80 C44,74 49,68 52,63 C51,69 54,72 56,68 C55,64 58,61 57,58 Z"
+        fill="#FFE066" />
+</svg>
