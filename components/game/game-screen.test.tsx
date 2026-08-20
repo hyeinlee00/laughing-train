@@ -7,13 +7,13 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-test("6개의 붕어빵 틀이 넘버패드 배치 순서(4,5,6,1,2,3)로 렌더링된다", () => {
+test("9개의 붕어빵 틀이 넘버패드 배치 순서(7,8,9,4,5,6,1,2,3)로 렌더링된다", () => {
   render(<GameScreen />);
 
-  const trays = screen.getAllByTestId(/^tray-/);
+  const trays = screen.getAllByTestId(/^tray-\d$/);
   const order = trays.map((tray) => tray.getAttribute("data-tray-key"));
 
-  expect(order).toEqual(["4", "5", "6", "1", "2", "3"]);
+  expect(order).toEqual(["7", "8", "9", "4", "5", "6", "1", "2", "3"]);
 });
 
 test("매출·남은 시간·콤보·현재 주문 표시 영역이 보인다", () => {

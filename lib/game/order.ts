@@ -34,8 +34,11 @@ export function quoteSale(order: Order, readyCount: number): SaleQuote {
   };
 }
 
-export function createRandomOrder(): Order {
-  const range = MAX_ORDER_QUANTITY - MIN_ORDER_QUANTITY + 1;
-  const quantity = MIN_ORDER_QUANTITY + Math.floor(Math.random() * range);
+export function createRandomOrder(
+  minQuantity: number = MIN_ORDER_QUANTITY,
+  maxQuantity: number = MAX_ORDER_QUANTITY
+): Order {
+  const range = maxQuantity - minQuantity + 1;
+  const quantity = minQuantity + Math.floor(Math.random() * range);
   return { quantity };
 }

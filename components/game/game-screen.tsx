@@ -110,7 +110,7 @@ export function GameScreen() {
   const { trays, order, revenue, combo } = gameState;
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-4 p-4">
+    <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="grid grid-cols-4 gap-2 text-center text-sm sm:text-base">
         <div data-testid="stat-revenue">
           매출
