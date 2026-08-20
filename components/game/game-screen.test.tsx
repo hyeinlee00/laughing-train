@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 
 import { GameScreen } from "@/components/game/game-screen";
@@ -49,6 +49,37 @@ test("굽는 중에 너무 일찍 활성화해 EARLY로 판정되면 화면에 �
   fireEvent.click(tray1); // COOKING 중 활성화 -> EARLY 판정
 
   expect(screen.getByTestId("tray-1-judgement")).toHaveTextContent("EARLY");
+
+  vi.useRealTimers();
+});
+
+test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const trayKeys = [1, 2, 3, 4, 5, 6];
+
+  // 6개 틀 모두 반죽 시작
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+
+  // batter(600) + cooking(2200) = 2800ms 지나 뒤집기 타이밍 진입
+  act(() => {
+    vi.advanceTimersByTime(2800);
+  });
+
+  // 뒤집기 타이밍 진입 직후(퍼펙트 구간)에 모두 뒤집기
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+
+  // cooking2(1200) 지나 완성
+  act(() => {
+    vi.advanceTimersByTime(1300);
+  });
+
+  expect(screen.getByTestId("stat-revenue")).not.toHaveTextContent("₩0");
 
   vi.useRealTimers();
 });

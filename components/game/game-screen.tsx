@@ -9,10 +9,17 @@ import {
   tickTray,
   type Tray as TrayData,
 } from "@/lib/game/tray-state";
+import { createRandomOrder, quoteSale, type Order } from "@/lib/game/order";
 import { Tray } from "@/components/game/tray";
 
 const TRAY_KEYS = TRAY_LAYOUT_ROWS.flat();
 const TICK_MS = 100;
+
+type GameState = {
+  trays: Record<number, TrayData>;
+  order: Order;
+  revenue: number;
+};
 
 function createInitialTrays(): Record<number, TrayData> {
   return Object.fromEntries(
@@ -20,15 +27,49 @@ function createInitialTrays(): Record<number, TrayData> {
   );
 }
 
+function createInitialState(): GameState {
+  return {
+    trays: createInitialTrays(),
+    order: createRandomOrder(),
+    revenue: 0,
+  };
+}
+
+function tickGameState(state: GameState): GameState {
+  const nextTrays: Record<number, TrayData> = {};
+  for (const key of TRAY_KEYS) {
+    nextTrays[key] = tickTray(state.trays[key], TICK_MS);
+  }
+
+  const readyKeys = TRAY_KEYS.filter((key) => nextTrays[key].state === "READY");
+  const quote = quoteSale(state.order, readyKeys.length);
+
+  if (!quote.canSell) {
+    return { ...state, trays: nextTrays };
+  }
+
+  const soldTrays = { ...nextTrays };
+  for (const key of readyKeys.slice(0, quote.unitsSold)) {
+    soldTrays[key] = createEmptyTray();
+  }
+
+  return {
+    trays: soldTrays,
+    order: createRandomOrder(),
+    revenue: state.revenue + quote.revenue,
+  };
+}
+
 export function GameScreen() {
-  const [trays, setTrays] = useState<Record<number, TrayData>>(
-    createInitialTrays
-  );
+  const [gameState, setGameState] = useState<GameState>(createInitialState);
 
   const handleActivate = useCallback((trayKey: number) => {
-    setTrays((current) => {
-      const { tray } = activateTray(current[trayKey]);
-      return { ...current, [trayKey]: tray };
+    setGameState((current) => {
+      const { tray } = activateTray(current.trays[trayKey]);
+      return {
+        ...current,
+        trays: { ...current.trays, [trayKey]: tray },
+      };
     });
   }, []);
 
@@ -46,23 +87,19 @@ export function GameScreen() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTrays((current) => {
-        const next: Record<number, TrayData> = { ...current };
-        for (const key of TRAY_KEYS) {
-          next[key] = tickTray(current[key], TICK_MS);
-        }
-        return next;
-      });
+      setGameState(tickGameState);
     }, TICK_MS);
     return () => clearInterval(interval);
   }, []);
+
+  const { trays, order, revenue } = gameState;
 
   return (
     <div className="flex w-full max-w-xl flex-col gap-4 p-4">
       <div className="grid grid-cols-4 gap-2 text-center text-sm sm:text-base">
         <div data-testid="stat-revenue">
           매출
-          <br />₩0
+          <br />₩{revenue}
         </div>
         <div data-testid="stat-time">
           남은 시간
@@ -76,7 +113,8 @@ export function GameScreen() {
         </div>
         <div data-testid="stat-order">
           주문
-          <br />-
+          <br />
+          {order.quantity}개
         </div>
       </div>
 
