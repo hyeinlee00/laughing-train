@@ -53,6 +53,38 @@ test("굽는 중에 너무 일찍 활성화해 EARLY로 판정되면 화면에 �
   vi.useRealTimers();
 });
 
+test("PERFECT 판정이 연속되면 콤보가 오르고, EARLY 판정에 초기화된다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const tray1 = screen.getByTestId("tray-1");
+  const tray2 = screen.getByTestId("tray-2");
+
+  fireEvent.click(tray1);
+  fireEvent.click(tray2);
+  act(() => {
+    vi.advanceTimersByTime(2800); // 뒤집기 타이밍(퍼펙트 구간) 진입
+  });
+
+  fireEvent.click(tray1); // PERFECT
+  expect(screen.getByTestId("stat-combo")).toHaveTextContent("x1");
+
+  fireEvent.click(tray2); // PERFECT
+  expect(screen.getByTestId("stat-combo")).toHaveTextContent("x2");
+
+  // 아직 비어있는 tray3을 굽는 중(EARLY 구간)에 조기 클릭
+  const tray3 = screen.getByTestId("tray-3");
+  fireEvent.click(tray3);
+  act(() => {
+    vi.advanceTimersByTime(700);
+  });
+  fireEvent.click(tray3); // EARLY -> 콤보 초기화
+
+  expect(screen.getByTestId("stat-combo")).toHaveTextContent("x0");
+
+  vi.useRealTimers();
+});
+
 test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
   vi.useFakeTimers();
   render(<GameScreen />);

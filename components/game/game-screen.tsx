@@ -10,6 +10,7 @@ import {
   type Tray as TrayData,
 } from "@/lib/game/tray-state";
 import { createRandomOrder, quoteSale, type Order } from "@/lib/game/order";
+import { comboBonus, nextCombo } from "@/lib/game/combo";
 import { Tray } from "@/components/game/tray";
 
 const TRAY_KEYS = TRAY_LAYOUT_ROWS.flat();
@@ -19,6 +20,7 @@ type GameState = {
   trays: Record<number, TrayData>;
   order: Order;
   revenue: number;
+  combo: number;
 };
 
 function createInitialTrays(): Record<number, TrayData> {
@@ -32,20 +34,28 @@ function createInitialState(): GameState {
     trays: createInitialTrays(),
     order: createRandomOrder(),
     revenue: 0,
+    combo: 0,
   };
 }
 
 function tickGameState(state: GameState): GameState {
   const nextTrays: Record<number, TrayData> = {};
+  let combo = state.combo;
+
   for (const key of TRAY_KEYS) {
-    nextTrays[key] = tickTray(state.trays[key], TICK_MS);
+    const previousTray = state.trays[key];
+    const nextTray = tickTray(previousTray, TICK_MS);
+    if (previousTray.state !== "BURNT" && nextTray.state === "BURNT") {
+      combo = nextCombo(combo, "BURNT");
+    }
+    nextTrays[key] = nextTray;
   }
 
   const readyKeys = TRAY_KEYS.filter((key) => nextTrays[key].state === "READY");
   const quote = quoteSale(state.order, readyKeys.length);
 
   if (!quote.canSell) {
-    return { ...state, trays: nextTrays };
+    return { ...state, trays: nextTrays, combo };
   }
 
   const soldTrays = { ...nextTrays };
@@ -56,7 +66,8 @@ function tickGameState(state: GameState): GameState {
   return {
     trays: soldTrays,
     order: createRandomOrder(),
-    revenue: state.revenue + quote.revenue,
+    revenue: state.revenue + quote.revenue + comboBonus(combo),
+    combo,
   };
 }
 
@@ -65,10 +76,14 @@ export function GameScreen() {
 
   const handleActivate = useCallback((trayKey: number) => {
     setGameState((current) => {
-      const { tray } = activateTray(current.trays[trayKey]);
+      const { tray, judgement } = activateTray(current.trays[trayKey]);
+      const combo = judgement
+        ? nextCombo(current.combo, judgement)
+        : current.combo;
       return {
         ...current,
         trays: { ...current.trays, [trayKey]: tray },
+        combo,
       };
     });
   }, []);
@@ -92,7 +107,7 @@ export function GameScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  const { trays, order, revenue } = gameState;
+  const { trays, order, revenue, combo } = gameState;
 
   return (
     <div className="flex w-full max-w-xl flex-col gap-4 p-4">
@@ -109,7 +124,7 @@ export function GameScreen() {
         <div data-testid="stat-combo">
           콤보
           <br />
-          x0
+          x{combo}
         </div>
         <div data-testid="stat-order">
           주문
