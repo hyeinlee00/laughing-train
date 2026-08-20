@@ -32,6 +32,8 @@ type GameState = {
   burntCount: number;
   elapsedMs: number;
   shakeUntilMs: number;
+  lastDelivery: { quantity: number; hasServiceBonus: boolean } | null;
+  deliveryPopKey: number;
 };
 
 const SHAKE_DURATION_MS = 300;
@@ -58,6 +60,8 @@ function createInitialState(): GameState {
     burntCount: 0,
     elapsedMs: 0,
     shakeUntilMs: 0,
+    lastDelivery: null,
+    deliveryPopKey: 0,
   };
 }
 
@@ -117,6 +121,11 @@ function tickGameState(state: GameState): GameState {
     burntCount,
     shakeUntilMs,
     elapsedMs,
+    lastDelivery: {
+      quantity: quote.unitsSold,
+      hasServiceBonus: quote.hasServiceBonus,
+    },
+    deliveryPopKey: state.deliveryPopKey + 1,
   };
 }
 
@@ -196,6 +205,8 @@ export function GameScreen() {
     burntCount,
     elapsedMs,
     shakeUntilMs,
+    lastDelivery,
+    deliveryPopKey,
   } = gameState;
 
   const previousComboRef = useRef(combo);
@@ -260,6 +271,17 @@ export function GameScreen() {
           {order.quantity}개
         </div>
       </div>
+
+      {lastDelivery && (
+        <div
+          key={deliveryPopKey}
+          data-testid="delivery-feedback"
+          className="text-center text-sm font-bold text-green-600 [animation:judgement-pop_1s_ease-out_forwards] dark:text-green-400"
+        >
+          🧑 손님에게 {lastDelivery.quantity}개 전달 완료!
+          {lastDelivery.hasServiceBonus ? " (서비스 보너스 포함)" : ""}
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {TRAY_LAYOUT_ROWS.map((row, rowIndex) => (

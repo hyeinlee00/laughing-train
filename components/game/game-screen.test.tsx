@@ -168,6 +168,34 @@ test("붕어빵이 타면 화면에 흔들림 애니메이션 클래스가 붙�
   vi.useRealTimers();
 });
 
+test("판매가 이뤄지면 손님에게 전달됐다는 표시가 나타난다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const trayKeys = [1, 2, 3, 4, 5, 6];
+
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+
+  act(() => {
+    vi.advanceTimersByTime(2800);
+  });
+
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+
+  act(() => {
+    vi.advanceTimersByTime(1300);
+  });
+
+  const delivery = screen.getByTestId("delivery-feedback");
+  expect(delivery.textContent).toMatch(/전달/);
+
+  vi.useRealTimers();
+});
+
 test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
   vi.useFakeTimers();
   render(<GameScreen />);
