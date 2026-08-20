@@ -22,6 +22,7 @@ export type TimingConfig = {
   goodWindowMs: number;
   burnGraceMs: number;
   cooking2Ms: number;
+  readyBurnMs: number;
 };
 
 export const DEFAULT_TIMING: TimingConfig = {
@@ -31,6 +32,7 @@ export const DEFAULT_TIMING: TimingConfig = {
   goodWindowMs: 1000,
   burnGraceMs: 1200,
   cooking2Ms: 1200,
+  readyBurnMs: 5000,
 };
 
 export function createEmptyTray(): Tray {
@@ -98,6 +100,10 @@ export function tickTray(
       return elapsedMs >= config.cooking2Ms
         ? { state: "READY", elapsedMs: 0 }
         : { state: "COOKING_2", elapsedMs };
+    case "READY":
+      return elapsedMs >= config.readyBurnMs
+        ? { state: "BURNT", elapsedMs: 0 }
+        : { state: "READY", elapsedMs };
     default:
       return tray;
   }

@@ -123,6 +123,22 @@ describe("tickTray", () => {
     expect(next.state).toBe("BURNT");
   });
 
+  it("완성 상태는 readyBurnMs 이전이면 계속 완성 상태를 유지한다", () => {
+    const tray: Tray = { state: "READY", elapsedMs: 0 };
+
+    const next = tickTray(tray, DEFAULT_TIMING.readyBurnMs - 1);
+
+    expect(next.state).toBe("READY");
+  });
+
+  it("완성 상태를 readyBurnMs 이상 방치하면 탄다", () => {
+    const tray: Tray = { state: "READY", elapsedMs: 0 };
+
+    const next = tickTray(tray, DEFAULT_TIMING.readyBurnMs);
+
+    expect(next.state).toBe("BURNT");
+  });
+
   it("서로 다른 두 틀은 독립적으로 상태를 유지한다", () => {
     const trayA: Tray = { state: "BATTER", elapsedMs: 0 };
     const trayB: Tray = { state: "COOKING", elapsedMs: 0 };
