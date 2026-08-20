@@ -13,12 +13,12 @@ const STATE_LABELS: Record<TrayState, string> = {
 };
 
 const STATE_IMAGES: Partial<Record<TrayState, string>> = {
-  BATTER: "/assets/bungeoppang/batter.svg",
-  COOKING: "/assets/bungeoppang/cooking.svg",
-  FLIP_READY: "/assets/bungeoppang/cooking.svg",
-  COOKING_2: "/assets/bungeoppang/flipped.svg",
-  READY: "/assets/bungeoppang/ready.svg",
-  BURNT: "/assets/bungeoppang/burnt.svg",
+  BATTER: "/assets/bungeoppang/batter.png",
+  COOKING: "/assets/bungeoppang/cooking.png",
+  FLIP_READY: "/assets/bungeoppang/cooking.png",
+  COOKING_2: "/assets/bungeoppang/flipped.png",
+  READY: "/assets/bungeoppang/ready.png",
+  BURNT: "/assets/bungeoppang/burnt.png",
 };
 
 const JUDGEMENT_CLASSES: Record<FlipJudgement, string> = {
@@ -26,6 +26,13 @@ const JUDGEMENT_CLASSES: Record<FlipJudgement, string> = {
   GOOD: "text-sm font-bold",
   EARLY: "text-sm font-bold",
   LATE: "text-sm font-bold",
+};
+
+const STATE_FLAME: Partial<Record<TrayState, boolean>> = {
+  COOKING: true,
+  FLIP_READY: true,
+  COOKING_2: true,
+  READY: true,
 };
 
 const STATE_TINT_CLASSES: Record<TrayState, string> = {
@@ -64,7 +71,7 @@ export function Tray({
       className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg border border-border bg-cover bg-center text-neutral-100 transition-transform duration-100 active:scale-95 ${STATE_TINT_CLASSES[state]}`}
     >
       <span className="text-xs text-neutral-300">{trayKey}</span>
-      <div className="flex min-h-0 flex-1 items-center justify-center">
+      <div className="relative flex min-h-0 flex-1 items-center justify-center">
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -74,6 +81,15 @@ export function Tray({
           />
         ) : (
           <span className="text-2xl opacity-30">○</span>
+        )}
+        {STATE_FLAME[state] && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/assets/effects/fire_small.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 left-1/2 h-5 w-auto -translate-x-1/2 [animation:flame-flicker_0.4s_ease-in-out_infinite]"
+          />
         )}
       </div>
       <span className="text-[10px] text-neutral-300">
