@@ -66,8 +66,11 @@ function getCustomerPatienceMs(customerId: number): number {
   return CUSTOMER_PATIENCE_MS[customerId] ?? 10_000;
 }
 
-function randomCustomerId(): number {
-  return 1 + Math.floor(Math.random() * 4);
+const CUSTOMER_IDS = [1, 2, 3, 4];
+
+function randomCustomerId(excludeId?: number): number {
+  const pool = CUSTOMER_IDS.filter((id) => id !== excludeId);
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function createInitialTrays(): Record<number, TrayData> {
@@ -130,7 +133,7 @@ function tickGameState(state: GameState): GameState {
     state.elapsedMs < state.happyUntilMs &&
     elapsedMs >= state.happyUntilMs
   ) {
-    customerId = randomCustomerId();
+    customerId = randomCustomerId(customerId);
   }
 
   if (
@@ -138,7 +141,7 @@ function tickGameState(state: GameState): GameState {
     state.elapsedMs < state.angryUntilMs &&
     elapsedMs >= state.angryUntilMs
   ) {
-    customerId = randomCustomerId();
+    customerId = randomCustomerId(customerId);
   }
 
   const orderDeadlineMs =

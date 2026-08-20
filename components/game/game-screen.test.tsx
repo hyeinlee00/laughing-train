@@ -398,7 +398,9 @@ test("주문 인내심을 초과하면 콤보가 초기화되고 매출에서 20
   expect(screen.getByTestId("stat-revenue")).toHaveTextContent("₩600");
 
   act(() => {
-    vi.advanceTimersByTime(10_000); // 새 주문의 인내심(10초) 초과
+    // 배달 1초 뒤 손님이 바뀌는데, 직전 손님(customerId=1)은 제외되므로
+    // 다음 손님은 customerId=2(인내심 13초)가 되어 그 기준으로 초과시킨다.
+    vi.advanceTimersByTime(13_000);
   });
 
   expect(screen.getByTestId("stat-combo")).toHaveTextContent("x0");
