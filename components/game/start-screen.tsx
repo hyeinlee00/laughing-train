@@ -20,7 +20,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
         게임 시작
       </Button>
       <p className="text-xs text-muted-foreground">
-        1~6 키 또는 마우스로 조작
+        1~9 키 또는 마우스로 조작
       </p>
     </div>
   );

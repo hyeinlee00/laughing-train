@@ -1,0 +1,6 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path id="puffSmall" d="M70,36 C64,36 60,30 63,24 C60,19 65,13 71,15 C73,9 82,9 84,15 C90,13 95,19 92,24 C95,29 91,35 85,34 C84,39 76,40 70,36 Z"
+        fill="#4A4642" stroke="#241F1C" stroke-width="3" stroke-linejoin="round" opacity="0.9" />
+  <path id="cloud" d="M30,85 C20,85 14,76 18,66 C14,58 20,48 30,48 C32,36 46,28 58,32 C64,20 82,20 88,32 C100,28 112,38 108,50 C116,54 116,68 106,72 C108,84 96,92 84,88 C78,96 62,96 56,88 C44,94 32,90 30,85 Z"
+        fill="#55504C" stroke="#241F1C" stroke-width="4" stroke-linejoin="round" />
+</svg>

@@ -196,6 +196,36 @@ test("판매가 이뤄지면 손님에게 전달됐다는 표시가 나타난다
   vi.useRealTimers();
 });
 
+test("손님 이미지가 표시되고, 판매 직후에는 기쁜 표정으로 바뀐다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const customerImage = screen.getByTestId("customer-image");
+  expect(customerImage.getAttribute("src")).toMatch(
+    /\/assets\/customers\/customer_0[1-4]_waiting\.svg/
+  );
+
+  const trayKeys = [1, 2, 3, 4, 5, 6];
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+  act(() => {
+    vi.advanceTimersByTime(2800);
+  });
+  for (const key of trayKeys) {
+    fireEvent.click(screen.getByTestId(`tray-${key}`));
+  }
+  act(() => {
+    vi.advanceTimersByTime(1300);
+  });
+
+  expect(screen.getByTestId("customer-image").getAttribute("src")).toMatch(
+    /\/assets\/customers\/customer_0[1-4]_happy\.svg/
+  );
+
+  vi.useRealTimers();
+});
+
 test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
   vi.useFakeTimers();
   render(<GameScreen />);

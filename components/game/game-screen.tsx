@@ -34,9 +34,16 @@ type GameState = {
   shakeUntilMs: number;
   lastDelivery: { quantity: number; hasServiceBonus: boolean } | null;
   deliveryPopKey: number;
+  customerId: number;
+  happyUntilMs: number;
 };
 
 const SHAKE_DURATION_MS = 300;
+const HAPPY_DURATION_MS = 1000;
+
+function randomCustomerId(): number {
+  return 1 + Math.floor(Math.random() * 4);
+}
 
 function createInitialTrays(): Record<number, TrayData> {
   return Object.fromEntries(
@@ -62,6 +69,8 @@ function createInitialState(): GameState {
     shakeUntilMs: 0,
     lastDelivery: null,
     deliveryPopKey: 0,
+    customerId: randomCustomerId(),
+    happyUntilMs: 0,
   };
 }
 
@@ -77,6 +86,15 @@ function tickGameState(state: GameState): GameState {
   let combo = state.combo;
   let burntCount = state.burntCount;
   let shakeUntilMs = state.shakeUntilMs;
+  let customerId = state.customerId;
+
+  if (
+    state.happyUntilMs > 0 &&
+    state.elapsedMs < state.happyUntilMs &&
+    elapsedMs >= state.happyUntilMs
+  ) {
+    customerId = randomCustomerId();
+  }
 
   for (const key of TRAY_KEYS) {
     const previousTray = state.trays[key];
@@ -103,6 +121,7 @@ function tickGameState(state: GameState): GameState {
       burntCount,
       shakeUntilMs,
       elapsedMs,
+      customerId,
     };
   }
 
@@ -126,6 +145,8 @@ function tickGameState(state: GameState): GameState {
       hasServiceBonus: quote.hasServiceBonus,
     },
     deliveryPopKey: state.deliveryPopKey + 1,
+    customerId,
+    happyUntilMs: elapsedMs + HAPPY_DURATION_MS,
   };
 }
 
@@ -207,6 +228,8 @@ export function GameScreen() {
     shakeUntilMs,
     lastDelivery,
     deliveryPopKey,
+    customerId,
+    happyUntilMs,
   } = gameState;
 
   const previousComboRef = useRef(combo);
@@ -219,6 +242,8 @@ export function GameScreen() {
   }, [combo]);
 
   const isShaking = elapsedMs < shakeUntilMs;
+  const isCustomerHappy = elapsedMs < happyUntilMs;
+  const customerImageSrc = `/assets/customers/customer_0${customerId}_${isCustomerHappy ? "happy" : "waiting"}.svg`;
   const remainingSeconds = Math.max(
     0,
     Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
@@ -265,9 +290,15 @@ export function GameScreen() {
             x{combo}
           </span>
         </div>
-        <div data-testid="stat-order">
+        <div data-testid="stat-order" className="flex flex-col items-center">
           주문
-          <br />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            data-testid="customer-image"
+            src={customerImageSrc}
+            alt="손님"
+            className="h-8 w-auto object-contain"
+          />
           {order.quantity}개
         </div>
       </div>

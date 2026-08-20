@@ -61,3 +61,7 @@ completed
   토글에서 실제 조리 상태 전이(EMPTY→BATTER)로 교체함. 검증 대상이던
   "동일 동작" 자체는 그대로 유지되며, `components/game/game-screen.test.tsx`
   갱신 후 재검증 통과.
+- Revision: 실제 리소스가 준비되어 상태별 색상/텍스트 플레이스홀더 위에
+  `assets.md`의 붕어빵 SVG(반죽/굽는 중/뒤집힘/완성/탄 상태)를 연결함.
+  자동 테스트로 `READY` 상태에 `ready.svg`가 표시되는지 검증하고, 브라우저에서
+  이미지가 정상 로드됨을 확인함.

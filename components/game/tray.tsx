@@ -9,7 +9,16 @@ const STATE_LABELS: Record<TrayState, string> = {
   FLIP_READY: "뒤집기!",
   COOKING_2: "마무리 굽는 중",
   READY: "완성!",
-  BURNT: "💨 탄 붕어빵",
+  BURNT: "탄 붕어빵",
+};
+
+const STATE_IMAGES: Partial<Record<TrayState, string>> = {
+  BATTER: "/assets/bungeoppang/batter.svg",
+  COOKING: "/assets/bungeoppang/cooking.svg",
+  FLIP_READY: "/assets/bungeoppang/cooking.svg",
+  COOKING_2: "/assets/bungeoppang/flipped.svg",
+  READY: "/assets/bungeoppang/ready.svg",
+  BURNT: "/assets/bungeoppang/burnt.svg",
 };
 
 const JUDGEMENT_CLASSES: Record<FlipJudgement, string> = {
@@ -42,6 +51,8 @@ export function Tray({
   lastJudgement,
   onActivate,
 }: TrayProps) {
+  const image = STATE_IMAGES[state];
+
   return (
     <button
       type="button"
@@ -49,10 +60,24 @@ export function Tray({
       data-tray-key={trayKey}
       data-tray-state={state}
       onClick={() => onActivate(trayKey)}
-      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-border text-foreground transition-transform duration-100 active:scale-95 ${STATE_CLASSES[state]}`}
+      className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg border border-border text-foreground transition-transform duration-100 active:scale-95 ${STATE_CLASSES[state]}`}
     >
       <span className="text-xs text-muted-foreground">{trayKey}</span>
-      <span className="text-sm">{STATE_LABELS[state]}</span>
+      <div className="flex min-h-0 flex-1 items-center justify-center">
+        {image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={image}
+            alt={STATE_LABELS[state]}
+            className="h-full max-h-12 w-auto object-contain"
+          />
+        ) : (
+          <span className="text-2xl opacity-30">○</span>
+        )}
+      </div>
+      <span className="text-[10px] text-muted-foreground">
+        {STATE_LABELS[state]}
+      </span>
       {lastJudgement && (
         <span
           data-testid={`tray-${trayKey}-judgement`}

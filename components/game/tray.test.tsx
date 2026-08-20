@@ -36,3 +36,16 @@ test("판정이 없으면 판정 텍스트가 보이지 않는다", () => {
 
   expect(screen.queryByTestId("tray-1-judgement")).not.toBeInTheDocument();
 });
+
+test("조리 상태에 맞는 붕어빵 이미지가 표시된다", () => {
+  render(<Tray trayKey={1} state="READY" onActivate={() => {}} />);
+
+  const image = screen.getByRole("img");
+  expect(image).toHaveAttribute("src", "/assets/bungeoppang/ready.svg");
+});
+
+test("빈 틀 상태에서는 붕어빵 이미지가 없다", () => {
+  render(<Tray trayKey={1} state="EMPTY" onActivate={() => {}} />);
+
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});
