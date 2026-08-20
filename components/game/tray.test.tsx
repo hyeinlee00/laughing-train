@@ -40,8 +40,8 @@ test("판정이 없으면 판정 텍스트가 보이지 않는다", () => {
 test("조리 상태에 맞는 붕어빵 이미지가 표시된다", () => {
   render(<Tray trayKey={1} state="READY" onActivate={() => {}} />);
 
-  const image = screen.getByRole("img");
-  expect(image).toHaveAttribute("src", "/assets/bungeoppang/ready.svg");
+  const image = screen.getByAltText("완성!");
+  expect(image).toHaveAttribute("src", "/assets/bungeoppang/ready.png");
 });
 
 test("빈 틀 상태에서는 붕어빵 이미지가 없다", () => {

@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#171d3a" />
+      <stop offset="45%" stop-color="#1c2444" />
+      <stop offset="80%" stop-color="#141a2e" />
+      <stop offset="100%" stop-color="#0c0f1c" />
+    </linearGradient>
+    <radialGradient id="lanternGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffb35c" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#ffb35c" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="warmGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffdca0" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#ffdca0" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="tentRoof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#241b2c" />
+      <stop offset="100%" stop-color="#140f1a" />
+    </linearGradient>
+    <linearGradient id="tentCloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c1502f" />
+      <stop offset="100%" stop-color="#7a2c1c" />
+    </linearGradient>
+  </defs>
+
+  <!-- sky / base -->
+  <rect x="0" y="0" width="1080" height="1920" fill="url(#sky)" />
+
+  <!-- faint distant skyline, kept low-contrast so it stays out of the way -->
+  <g opacity="0.35" fill="#232a48">
+    <rect x="360" y="230" width="60" height="160" />
+    <rect x="430" y="190" width="50" height="200" />
+    <rect x="490" y="250" width="70" height="140" />
+    <rect x="570" y="210" width="45" height="180" />
+    <rect x="625" y="260" width="55" height="130" />
+  </g>
+  <g fill="#3a4266" opacity="0.7">
+    <rect x="372" y="250" width="10" height="10" />
+    <rect x="398" y="280" width="10" height="10" />
+    <rect x="444" y="220" width="10" height="10" />
+    <rect x="460" y="260" width="10" height="10" />
+    <rect x="505" y="270" width="10" height="10" />
+    <rect x="585" y="240" width="10" height="10" />
+    <rect x="640" y="290" width="10" height="10" />
+  </g>
+
+  <!-- snow -->
+  <g fill="#f4f7ff">
+    <circle cx="95" cy="140" r="3" opacity="0.8" />
+    <circle cx="220" cy="90" r="2.5" opacity="0.7" />
+    <circle cx="340" cy="180" r="3" opacity="0.9" />
+    <circle cx="470" cy="120" r="2" opacity="0.6" />
+    <circle cx="610" cy="160" r="3" opacity="0.8" />
+    <circle cx="740" cy="100" r="2.5" opacity="0.7" />
+    <circle cx="860" cy="200" r="3" opacity="0.85" />
+    <circle cx="960" cy="140" r="2" opacity="0.6" />
+    <circle cx="160" cy="330" r="2.5" opacity="0.7" />
+    <circle cx="420" cy="360" r="3" opacity="0.8" />
+    <circle cx="560" cy="420" r="2" opacity="0.6" />
+    <circle cx="700" cy="340" r="2.5" opacity="0.75" />
+    <circle cx="900" cy="400" r="3" opacity="0.8" />
+    <circle cx="260" cy="520" r="2.5" opacity="0.7" />
+    <circle cx="520" cy="600" r="2" opacity="0.6" />
+    <circle cx="780" cy="560" r="3" opacity="0.8" />
+    <circle cx="380" cy="700" r="2" opacity="0.6" />
+    <circle cx="650" cy="760" r="2.5" opacity="0.7" />
+    <circle cx="500" cy="850" r="2" opacity="0.55" />
+    <circle cx="150" cy="900" r="2.5" opacity="0.6" />
+    <circle cx="930" cy="880" r="2.5" opacity="0.6" />
+  </g>
+
+  <!-- ============ LEFT SIDE: hanok building ============ -->
+  <g>
+    <!-- upper hanok roof -->
+    <path d="M0 90 L120 40 L260 20 L400 55 L430 100 L0 100 Z" fill="#2c2d3a" />
+    <path d="M0 100 L430 100 L430 118 L0 118 Z" fill="#3a3b4a" />
+    <!-- roof texture lines -->
+    <g stroke="#20212c" stroke-width="3" opacity="0.6">
+      <line x1="40" y1="70" x2="40" y2="98" />
+      <line x1="90" y1="58" x2="90" y2="98" />
+      <line x1="150" y1="42" x2="150" y2="98" />
+      <line x1="210" y1="34" x2="210" y2="98" />
+      <line x1="270" y1="34" x2="270" y2="98" />
+      <line x1="330" y1="50" x2="330" y2="98" />
+      <line x1="390" y1="70" x2="390" y2="98" />
+    </g>
+
+    <!-- hanok wall block -->
+    <rect x="0" y="118" width="430" height="270" fill="#3d2c22" />
+
+    <!-- lit window (warm) -->
+    <rect x="230" y="160" width="150" height="150" fill="#7a5a2c" />
+    <rect x="230" y="160" width="150" height="150" fill="url(#warmGlow)" opacity="0.5" />
+    <g stroke="#241a12" stroke-width="6">
+      <line x1="305" y1="160" x2="305" y2="310" />
+      <line x1="230" y1="235" x2="380" y2="235" />
+    </g>
+    <rect x="230" y="160" width="150" height="150" fill="none" stroke="#241a12" stroke-width="8" />
+
+    <!-- door area -->
+    <rect x="40" y="200" width="150" height="188" fill="#5a4126" />
+    <rect x="55" y="215" width="120" height="160" fill="#7a5a2c" opacity="0.85" />
+    <g stroke="#241a12" stroke-width="5">
+      <line x1="115" y1="215" x2="115" y2="375" />
+      <line x1="55" y1="295" x2="175" y2="295" />
+    </g>
+
+    <!-- steps -->
+    <rect x="30" y="388" width="180" height="16" fill="#57534e" />
+    <rect x="20" y="404" width="200" height="16" fill="#44403c" />
+
+    <!-- small stone base to the right -->
+    <rect x="380" y="230" width="80" height="158" fill="#57534e" />
+    <g stroke="#44403c" stroke-width="3" opacity="0.7">
+      <line x1="380" y1="260" x2="460" y2="260" />
+      <line x1="380" y1="300" x2="460" y2="300" />
+      <line x1="380" y1="340" x2="460" y2="340" />
+    </g>
+
+    <!-- hanok signboard "붕어빵" -->
+    <rect x="255" y="128" width="120" height="34" rx="4" fill="#2a1c12" stroke="#c9a25a" stroke-width="2" />
+    <text x="315" y="151" font-size="20" fill="#e8c988" text-anchor="middle" font-family="sans-serif">붕어빵</text>
+
+    <!-- red lantern under eave -->
+    <ellipse cx="455" cy="150" rx="16" ry="22" fill="#b5342a" />
+    <rect x="447" y="128" width="16" height="8" fill="#3d2c22" />
+    <rect x="447" y="170" width="16" height="8" fill="#3d2c22" />
+  </g>
+
+  <!-- left alley wall, holds the street-food signboards -->
+  <g>
+    <rect x="0" y="420" width="150" height="760" fill="#221d29" />
+    <rect x="20" y="470" width="45" height="60" fill="#7a5a2c" opacity="0.4" />
+    <rect x="20" y="610" width="45" height="60" fill="#5a4126" opacity="0.3" />
+  </g>
+
+  <!-- left street-food signboards on wall, stacked -->
+  <g font-family="sans-serif" text-anchor="middle">
+    <rect x="30" y="820" width="90" height="150" rx="6" fill="#f3e6c8" stroke="#b5342a" stroke-width="4" />
+    <text x="75" y="875" font-size="30" fill="#b5342a">떡</text>
+    <text x="75" y="915" font-size="30" fill="#b5342a">볶</text>
+    <text x="75" y="955" font-size="30" fill="#b5342a">이</text>
+
+    <rect x="0" y="1010" width="80" height="100" rx="6" fill="#f3e6c8" stroke="#c9852a" stroke-width="4" />
+    <text x="40" y="1050" font-size="26" fill="#c9852a">어</text>
+    <text x="40" y="1085" font-size="26" fill="#c9852a">묵</text>
+  </g>
+
+  <!-- left street lamp -->
+  <g>
+    <rect x="130" y="430" width="10" height="480" fill="#26241f" />
+    <path d="M100 430 L140 430 L200 400 L200 388 L100 388 Z" fill="#26241f" />
+    <ellipse cx="200" cy="430" rx="26" ry="34" fill="#3a3020" />
+    <ellipse cx="200" cy="430" rx="18" ry="26" fill="#ffd98a" />
+    <circle cx="200" cy="430" r="55" fill="url(#warmGlow)" opacity="0.55" />
+    <!-- small hanging lantern -->
+    <rect x="192" y="470" width="4" height="60" fill="#3a3020" />
+    <ellipse cx="194" cy="555" rx="22" ry="30" fill="#c1502f" />
+    <rect x="184" y="590" width="20" height="12" fill="#7a2c1c" />
+    <circle cx="194" cy="555" r="34" fill="url(#lanternGlow)" opacity="0.6" />
+  </g>
+
+  <!-- ============ RIGHT SIDE: modern building + convenience store ============ -->
+  <g>
+    <rect x="700" y="0" width="380" height="330" fill="#26283a" />
+    <g fill="#f2c66a" opacity="0.85">
+      <rect x="730" y="30" width="46" height="60" />
+      <rect x="800" y="30" width="46" height="60" />
+      <rect x="730" y="120" width="46" height="60" />
+      <rect x="870" y="120" width="46" height="60" />
+      <rect x="940" y="30" width="46" height="60" />
+      <rect x="1000" y="150" width="46" height="60" />
+    </g>
+    <g fill="#3c3f57" opacity="0.9">
+      <rect x="800" y="120" width="46" height="60" />
+      <rect x="870" y="30" width="46" height="60" />
+      <rect x="940" y="120" width="46" height="60" />
+    </g>
+
+    <!-- convenience store block -->
+    <rect x="900" y="220" width="180" height="220" fill="#1f6f5c" />
+    <rect x="900" y="220" width="180" height="46" fill="#e6483a" />
+    <text x="990" y="252" font-size="26" fill="#fdf6ea" text-anchor="middle" font-family="sans-serif">편의점</text>
+    <rect x="920" y="285" width="60" height="90" fill="#cfe8e0" opacity="0.85" />
+    <rect x="995" y="285" width="60" height="90" fill="#123b30" opacity="0.9" />
+    <rect x="920" y="390" width="135" height="8" fill="#e6483a" />
+
+    <!-- alley wall, holds the right-side signboards -->
+    <g>
+      <rect x="930" y="440" width="150" height="740" fill="#1c2130" />
+      <rect x="1005" y="520" width="45" height="60" fill="#f2c66a" opacity="0.35" />
+      <rect x="1005" y="660" width="45" height="60" fill="#3c3f57" opacity="0.4" />
+    </g>
+
+    <!-- signboards 떡볶이 -->
+    <rect x="905" y="770" width="90" height="150" rx="6" fill="#1e2536" stroke="#f2a33c" stroke-width="4" />
+    <text x="950" y="825" font-size="28" fill="#f2a33c" text-anchor="middle" font-family="sans-serif">떡</text>
+    <text x="950" y="863" font-size="28" fill="#f2a33c" text-anchor="middle" font-family="sans-serif">볶</text>
+    <text x="950" y="901" font-size="28" fill="#f2a33c" text-anchor="middle" font-family="sans-serif">이</text>
+
+    <rect x="905" y="940" width="90" height="100" rx="6" fill="#fdf6ea" stroke="#1f6f5c" stroke-width="4" />
+    <text x="950" y="982" font-size="26" fill="#1f6f5c" text-anchor="middle" font-family="sans-serif">편의</text>
+    <text x="950" y="1018" font-size="26" fill="#1f6f5c" text-anchor="middle" font-family="sans-serif">점</text>
+  </g>
+
+  <!-- right street lamp -->
+  <g>
+    <rect x="930" y="470" width="10" height="440" fill="#26241f" />
+    <path d="M900 470 L940 470 L980 445 L980 433 L900 433 Z" fill="#26241f" />
+    <ellipse cx="980" cy="470" rx="26" ry="34" fill="#3a3020" />
+    <ellipse cx="980" cy="470" rx="18" ry="26" fill="#ffd98a" />
+    <circle cx="980" cy="470" r="55" fill="url(#warmGlow)" opacity="0.55" />
+    <rect x="972" y="510" width="4" height="60" fill="#3a3020" />
+    <ellipse cx="974" cy="595" rx="22" ry="30" fill="#c1502f" />
+    <rect x="964" y="630" width="20" height="12" fill="#7a2c1c" />
+    <circle cx="974" cy="595" r="34" fill="url(#lanternGlow)" opacity="0.6" />
+  </g>
+
+  <!-- power lines strung across the alley -->
+  <g stroke="#0a0b12" stroke-width="3" fill="none" opacity="0.8">
+    <path d="M140 440 Q 540 620 930 480" />
+    <path d="M140 470 Q 540 660 930 520" />
+  </g>
+
+  <!-- ============ BOTTOM: bungeoppang food stall ============ -->
+  <g>
+    <!-- ground shadow -->
+    <ellipse cx="540" cy="1900" rx="540" ry="60" fill="#05060a" opacity="0.6" />
+
+    <!-- tent roof -->
+    <path d="M540 1330 L210 1490 L870 1490 Z" fill="url(#tentRoof)" />
+    <path d="M540 1330 L210 1490 L250 1490 Z" fill="#2e2338" opacity="0.6" />
+
+    <!-- tent front cloth -->
+    <path d="M230 1500 L850 1500 L830 1660 L250 1660 Z" fill="url(#tentCloth)" />
+
+    <!-- string lanterns along the awning -->
+    <g>
+      <line x1="230" y1="1500" x2="850" y2="1500" stroke="#3a1c14" stroke-width="4" />
+      <g>
+        <ellipse cx="290" cy="1545" rx="26" ry="34" fill="#ffb04a" />
+        <circle cx="290" cy="1545" r="46" fill="url(#lanternGlow)" opacity="0.7" />
+      </g>
+      <g>
+        <ellipse cx="430" cy="1555" rx="26" ry="34" fill="#ffb04a" />
+        <circle cx="430" cy="1555" r="46" fill="url(#lanternGlow)" opacity="0.7" />
+      </g>
+      <g>
+        <ellipse cx="570" cy="1560" rx="26" ry="34" fill="#ffb04a" />
+        <circle cx="570" cy="1560" r="46" fill="url(#lanternGlow)" opacity="0.75" />
+      </g>
+      <g>
+        <ellipse cx="710" cy="1555" rx="26" ry="34" fill="#ffb04a" />
+        <circle cx="710" cy="1555" r="46" fill="url(#lanternGlow)" opacity="0.7" />
+      </g>
+      <g>
+        <ellipse cx="810" cy="1545" rx="26" ry="34" fill="#ffb04a" />
+        <circle cx="810" cy="1545" r="46" fill="url(#lanternGlow)" opacity="0.7" />
+      </g>
+    </g>
+
+    <!-- cart / counter -->
+    <rect x="255" y="1700" width="570" height="150" fill="#4a3626" />
+    <rect x="255" y="1700" width="570" height="16" fill="#6a4e34" />
+    <rect x="300" y="1596" width="480" height="106" fill="#5a4230" />
+
+    <!-- griddle -->
+    <ellipse cx="540" cy="1630" rx="90" ry="26" fill="#2a2622" />
+    <ellipse cx="540" cy="1622" rx="80" ry="20" fill="#4a4238" />
+
+    <!-- crate of bread -->
+    <rect x="330" y="1610" width="140" height="50" rx="6" fill="#7a5c3a" />
+    <g fill="#e8b563">
+      <ellipse cx="355" cy="1610" rx="16" ry="9" />
+      <ellipse cx="395" cy="1610" rx="16" ry="9" />
+      <ellipse cx="435" cy="1610" rx="16" ry="9" />
+    </g>
+
+    <!-- storefront sign on counter -->
+    <rect x="380" y="1745" width="320" height="70" rx="4" fill="#3a2a1c" stroke="#e8c988" stroke-width="3" />
+    <text x="540" y="1793" font-size="32" fill="#e8c988" text-anchor="middle" font-family="sans-serif">붕어빵</text>
+
+    <!-- wheels / bins under cart -->
+    <rect x="270" y="1850" width="70" height="60" fill="#3a2a1c" />
+    <rect x="740" y="1850" width="70" height="60" fill="#3a2a1c" />
+    <circle cx="320" cy="1910" r="14" fill="#171412" />
+    <circle cx="760" cy="1910" r="14" fill="#171412" />
+
+    <!-- standing menu board, left of cart -->
+    <g transform="translate(70,1730)">
+      <rect x="0" y="0" width="120" height="150" fill="#1c1a17" stroke="#4a4238" stroke-width="4" />
+      <text x="60" y="55" font-size="24" fill="#e8c988" text-anchor="middle" font-family="sans-serif">붕</text>
+      <text x="60" y="90" font-size="24" fill="#e8c988" text-anchor="middle" font-family="sans-serif">어</text>
+      <text x="60" y="125" font-size="24" fill="#e8c988" text-anchor="middle" font-family="sans-serif">빵</text>
+      <line x1="15" y1="150" x2="0" y2="200" stroke="#1c1a17" stroke-width="8" />
+      <line x1="105" y1="150" x2="120" y2="200" stroke="#1c1a17" stroke-width="8" />
+    </g>
+  </g>
+</svg>
