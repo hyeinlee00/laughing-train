@@ -70,10 +70,20 @@ describe("activateTray", () => {
   it("탄 붕어빵을 활성화하면 빈 틀로 초기화된다", () => {
     const burntTray: Tray = { state: "BURNT", elapsedMs: 9999 };
 
-    const { tray, judgement } = activateTray(burntTray);
+    const { tray, judgement, harvested } = activateTray(burntTray);
 
     expect(tray.state).toBe("EMPTY");
     expect(judgement).toBeUndefined();
+    expect(harvested).toBeUndefined();
+  });
+
+  it("완성 상태를 활성화하면 빈 틀이 되고 수확됨을 알린다", () => {
+    const readyTray: Tray = { state: "READY", elapsedMs: 0 };
+
+    const { tray, harvested } = activateTray(readyTray);
+
+    expect(tray.state).toBe("EMPTY");
+    expect(harvested).toBe(true);
   });
 });
 

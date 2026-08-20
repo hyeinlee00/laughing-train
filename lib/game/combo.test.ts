@@ -22,6 +22,10 @@ describe("nextCombo", () => {
   it("BURNT는 콤보를 0으로 초기화한다", () => {
     expect(nextCombo(5, "BURNT")).toBe(0);
   });
+
+  it("FAILED(주문 실패)는 콤보를 0으로 초기화한다", () => {
+    expect(nextCombo(5, "FAILED")).toBe(0);
+  });
 });
 
 describe("comboBonus", () => {

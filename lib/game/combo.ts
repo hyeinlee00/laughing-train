@@ -1,4 +1,10 @@
-export type ComboEvent = "PERFECT" | "GOOD" | "EARLY" | "LATE" | "BURNT";
+export type ComboEvent =
+  | "PERFECT"
+  | "GOOD"
+  | "EARLY"
+  | "LATE"
+  | "BURNT"
+  | "FAILED";
 
 export const COMBO_BONUS_PER_STACK = 100;
 
@@ -11,6 +17,7 @@ export function nextCombo(combo: number, event: ComboEvent): number {
     case "EARLY":
     case "LATE":
     case "BURNT":
+    case "FAILED":
       return 0;
   }
 }

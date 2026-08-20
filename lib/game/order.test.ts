@@ -1,46 +1,36 @@
 import { describe, expect, it } from "vitest";
 
-import { BASE_PRICE, quoteSale, type Order } from "@/lib/game/order";
+import { BASE_PRICE, deliverToOrder, type Order } from "@/lib/game/order";
 
-describe("quoteSale", () => {
-  it("완성 붕어빵이 주문 수량보다 적으면 판매할 수 없다", () => {
+describe("deliverToOrder", () => {
+  it("보관함 개수가 주문 수량보다 적으면 있는 만큼만 전달하고 주문이 유지된다", () => {
     const order: Order = { quantity: 3 };
 
-    const quote = quoteSale(order, 2);
+    const result = deliverToOrder(order, 2);
 
-    expect(quote.canSell).toBe(false);
-    expect(quote.revenue).toBe(0);
+    expect(result.deliveredCount).toBe(2);
+    expect(result.order.quantity).toBe(1);
+    expect(result.isComplete).toBe(false);
   });
 
-  it("완성 붕어빵이 정확히 주문 수량이면 서비스 보너스 없이 기본 판매된다", () => {
+  it("보관함 개수가 주문 수량과 정확히 같으면 전부 전달되고 주문이 완료된다", () => {
     const order: Order = { quantity: 3 };
 
-    const quote = quoteSale(order, 3);
+    const result = deliverToOrder(order, 3);
 
-    expect(quote.canSell).toBe(true);
-    expect(quote.hasServiceBonus).toBe(false);
-    expect(quote.unitsSold).toBe(3);
-    expect(quote.revenue).toBe(1500);
+    expect(result.deliveredCount).toBe(3);
+    expect(result.order.quantity).toBe(0);
+    expect(result.isComplete).toBe(true);
   });
 
-  it("완성 붕어빵이 주문 수량보다 1개 많으면 서비스 보너스가 적용된다", () => {
+  it("보관함 개수가 주문 수량보다 많아도 필요한 만큼만 전달되고 주문이 완료된다", () => {
     const order: Order = { quantity: 3 };
 
-    const quote = quoteSale(order, 4);
+    const result = deliverToOrder(order, 6);
 
-    expect(quote.hasServiceBonus).toBe(true);
-    expect(quote.unitsSold).toBe(4);
-    expect(quote.revenue).toBe(2000);
-  });
-
-  it("완성 붕어빵이 주문 수량보다 2개 이상 많아도 서비스 보너스는 1개분만 적용된다", () => {
-    const order: Order = { quantity: 3 };
-
-    const quote = quoteSale(order, 6);
-
-    expect(quote.hasServiceBonus).toBe(true);
-    expect(quote.unitsSold).toBe(4);
-    expect(quote.revenue).toBe(2000);
+    expect(result.deliveredCount).toBe(3);
+    expect(result.order.quantity).toBe(0);
+    expect(result.isComplete).toBe(true);
   });
 
   it("기본 가격은 개당 500원이다", () => {

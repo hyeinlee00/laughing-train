@@ -9,7 +9,13 @@ import {
   tickTray,
   type Tray as TrayData,
 } from "@/lib/game/tray-state";
-import { createRandomOrder, quoteSale, type Order } from "@/lib/game/order";
+import {
+  BASE_PRICE,
+  FAILURE_PENALTY,
+  createRandomOrder,
+  deliverToOrder,
+  type Order,
+} from "@/lib/game/order";
 import { comboBonus, nextCombo } from "@/lib/game/combo";
 import { getDifficultyBand } from "@/lib/game/difficulty";
 import { getGrade } from "@/lib/game/grade";
@@ -24,6 +30,8 @@ const GAME_DURATION_MS = 60_000;
 type GameState = {
   trays: Record<number, TrayData>;
   order: Order;
+  collectedCount: number;
+  pendingDeliveredCount: number;
   revenue: number;
   combo: number;
   maxCombo: number;
@@ -32,14 +40,31 @@ type GameState = {
   burntCount: number;
   elapsedMs: number;
   shakeUntilMs: number;
-  lastDelivery: { quantity: number; hasServiceBonus: boolean } | null;
+  lastDelivery: { quantity: number; isComplete: boolean } | null;
   deliveryPopKey: number;
+  emptyStoragePopKey: number;
   customerId: number;
   happyUntilMs: number;
+  angryUntilMs: number;
+  orderCreatedAtMs: number;
+  failedCount: number;
 };
 
 const SHAKE_DURATION_MS = 300;
 const HAPPY_DURATION_MS = 1000;
+const ANGRY_DURATION_MS = 3000;
+const PARTIAL_DELIVERY_BONUS_MS = 1000;
+
+const CUSTOMER_PATIENCE_MS: Record<number, number> = {
+  1: 10_000,
+  2: 13_000,
+  3: 16_000,
+  4: 18_000,
+};
+
+function getCustomerPatienceMs(customerId: number): number {
+  return CUSTOMER_PATIENCE_MS[customerId] ?? 10_000;
+}
 
 function randomCustomerId(): number {
   return 1 + Math.floor(Math.random() * 4);
@@ -59,6 +84,8 @@ function createInitialState(): GameState {
       startingBand.minOrderQuantity,
       startingBand.maxOrderQuantity
     ),
+    collectedCount: 0,
+    pendingDeliveredCount: 0,
     revenue: 0,
     combo: 0,
     maxCombo: 0,
@@ -69,8 +96,12 @@ function createInitialState(): GameState {
     shakeUntilMs: 0,
     lastDelivery: null,
     deliveryPopKey: 0,
+    emptyStoragePopKey: 0,
     customerId: randomCustomerId(),
     happyUntilMs: 0,
+    angryUntilMs: 0,
+    orderCreatedAtMs: 0,
+    failedCount: 0,
   };
 }
 
@@ -87,6 +118,12 @@ function tickGameState(state: GameState): GameState {
   let burntCount = state.burntCount;
   let shakeUntilMs = state.shakeUntilMs;
   let customerId = state.customerId;
+  let order = state.order;
+  let orderCreatedAtMs = state.orderCreatedAtMs;
+  let pendingDeliveredCount = state.pendingDeliveredCount;
+  let revenue = state.revenue;
+  let failedCount = state.failedCount;
+  let angryUntilMs = state.angryUntilMs;
 
   if (
     state.happyUntilMs > 0 &&
@@ -94,6 +131,29 @@ function tickGameState(state: GameState): GameState {
     elapsedMs >= state.happyUntilMs
   ) {
     customerId = randomCustomerId();
+  }
+
+  if (
+    state.angryUntilMs > 0 &&
+    state.elapsedMs < state.angryUntilMs &&
+    elapsedMs >= state.angryUntilMs
+  ) {
+    customerId = randomCustomerId();
+  }
+
+  const orderDeadlineMs =
+    state.orderCreatedAtMs + getCustomerPatienceMs(state.customerId);
+  const isOrderTimedOut =
+    state.elapsedMs < orderDeadlineMs && elapsedMs >= orderDeadlineMs;
+
+  if (isOrderTimedOut) {
+    combo = nextCombo(combo, "FAILED");
+    failedCount += 1;
+    revenue = Math.max(0, revenue - FAILURE_PENALTY);
+    angryUntilMs = elapsedMs + ANGRY_DURATION_MS;
+    order = createRandomOrder(band.minOrderQuantity, band.maxOrderQuantity);
+    orderCreatedAtMs = elapsedMs;
+    pendingDeliveredCount = 0;
   }
 
   for (const key of TRAY_KEYS) {
@@ -109,44 +169,21 @@ function tickGameState(state: GameState): GameState {
 
   const maxCombo = Math.max(state.maxCombo, combo);
 
-  const readyKeys = TRAY_KEYS.filter((key) => nextTrays[key].state === "READY");
-  const quote = quoteSale(state.order, readyKeys.length);
-
-  if (!quote.canSell) {
-    return {
-      ...state,
-      trays: nextTrays,
-      combo,
-      maxCombo,
-      burntCount,
-      shakeUntilMs,
-      elapsedMs,
-      customerId,
-    };
-  }
-
-  const soldTrays = { ...nextTrays };
-  for (const key of readyKeys.slice(0, quote.unitsSold)) {
-    soldTrays[key] = createEmptyTray();
-  }
-
   return {
     ...state,
-    trays: soldTrays,
-    order: createRandomOrder(band.minOrderQuantity, band.maxOrderQuantity),
-    revenue: state.revenue + quote.revenue + comboBonus(combo),
+    trays: nextTrays,
     combo,
     maxCombo,
     burntCount,
     shakeUntilMs,
     elapsedMs,
-    lastDelivery: {
-      quantity: quote.unitsSold,
-      hasServiceBonus: quote.hasServiceBonus,
-    },
-    deliveryPopKey: state.deliveryPopKey + 1,
     customerId,
-    happyUntilMs: elapsedMs + HAPPY_DURATION_MS,
+    order,
+    orderCreatedAtMs,
+    pendingDeliveredCount,
+    revenue,
+    failedCount,
+    angryUntilMs,
   };
 }
 
@@ -165,7 +202,7 @@ export function GameScreen() {
       }
 
       const band = getDifficultyBand(Math.floor(current.elapsedMs / 1000));
-      const { tray, judgement } = activateTray(
+      const { tray, judgement, harvested } = activateTray(
         current.trays[trayKey],
         band.timing
       );
@@ -175,11 +212,65 @@ export function GameScreen() {
       return {
         ...current,
         trays: { ...current.trays, [trayKey]: tray },
+        collectedCount: current.collectedCount + (harvested ? 1 : 0),
         combo,
         maxCombo: Math.max(current.maxCombo, combo),
         perfectCount:
           current.perfectCount + (judgement === "PERFECT" ? 1 : 0),
         goodCount: current.goodCount + (judgement === "GOOD" ? 1 : 0),
+      };
+    });
+  }, []);
+
+  const handleDeliver = useCallback(() => {
+    setGameState((current) => {
+      if (current.elapsedMs >= GAME_DURATION_MS) {
+        return current;
+      }
+
+      if (current.collectedCount === 0) {
+        return {
+          ...current,
+          emptyStoragePopKey: current.emptyStoragePopKey + 1,
+        };
+      }
+
+      const band = getDifficultyBand(Math.floor(current.elapsedMs / 1000));
+      const { deliveredCount, order, isComplete } = deliverToOrder(
+        current.order,
+        current.collectedCount
+      );
+      const pendingDeliveredCount =
+        current.pendingDeliveredCount + deliveredCount;
+
+      const base = {
+        ...current,
+        collectedCount: current.collectedCount - deliveredCount,
+        lastDelivery: { quantity: deliveredCount, isComplete },
+        deliveryPopKey: current.deliveryPopKey + 1,
+      };
+
+      if (!isComplete) {
+        return {
+          ...base,
+          order,
+          pendingDeliveredCount,
+          orderCreatedAtMs:
+            current.orderCreatedAtMs +
+            deliveredCount * PARTIAL_DELIVERY_BONUS_MS,
+        };
+      }
+
+      return {
+        ...base,
+        order: createRandomOrder(band.minOrderQuantity, band.maxOrderQuantity),
+        pendingDeliveredCount: 0,
+        revenue:
+          current.revenue +
+          pendingDeliveredCount * BASE_PRICE +
+          comboBonus(current.combo),
+        happyUntilMs: current.elapsedMs + HAPPY_DURATION_MS,
+        orderCreatedAtMs: current.elapsedMs,
       };
     });
   }, []);
@@ -218,6 +309,7 @@ export function GameScreen() {
   const {
     trays,
     order,
+    collectedCount,
     revenue,
     combo,
     maxCombo,
@@ -228,8 +320,11 @@ export function GameScreen() {
     shakeUntilMs,
     lastDelivery,
     deliveryPopKey,
+    emptyStoragePopKey,
     customerId,
     happyUntilMs,
+    angryUntilMs,
+    failedCount,
   } = gameState;
 
   const previousComboRef = useRef(combo);
@@ -243,7 +338,13 @@ export function GameScreen() {
 
   const isShaking = elapsedMs < shakeUntilMs;
   const isCustomerHappy = elapsedMs < happyUntilMs;
-  const customerImageSrc = `/assets/customers/customer_0${customerId}_${isCustomerHappy ? "happy" : "waiting"}.svg`;
+  const isCustomerAngry = elapsedMs < angryUntilMs;
+  const customerMood = isCustomerHappy
+    ? "happy"
+    : isCustomerAngry
+      ? "angry"
+      : "waiting";
+  const customerImageSrc = `/assets/customers/customer_0${customerId}_${customerMood}.svg`;
   const remainingSeconds = Math.max(
     0,
     Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
@@ -258,6 +359,7 @@ export function GameScreen() {
         perfectCount={perfectCount}
         goodCount={goodCount}
         burntCount={burntCount}
+        failedCount={failedCount}
         maxCombo={maxCombo}
         onRestart={handleRestart}
       />
@@ -292,13 +394,7 @@ export function GameScreen() {
         </div>
         <div data-testid="stat-order" className="flex flex-col items-center">
           주문
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            data-testid="customer-image"
-            src={customerImageSrc}
-            alt="손님"
-            className="h-8 w-auto object-contain"
-          />
+          <br />
           {order.quantity}개
         </div>
       </div>
@@ -309,10 +405,51 @@ export function GameScreen() {
           data-testid="delivery-feedback"
           className="text-center text-sm font-bold text-green-600 [animation:judgement-pop_1s_ease-out_forwards] dark:text-green-400"
         >
-          🧑 손님에게 {lastDelivery.quantity}개 전달 완료!
-          {lastDelivery.hasServiceBonus ? " (서비스 보너스 포함)" : ""}
+          🧑 손님에게 {lastDelivery.quantity}개 전달!
+          {lastDelivery.isComplete ? " (주문 완료)" : " (조금 더 필요해요)"}
         </div>
       )}
+
+      <div className="flex flex-col items-center gap-1">
+        <button
+          type="button"
+          data-testid="customer-deliver-button"
+          onClick={handleDeliver}
+          className="flex flex-col items-center"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            data-testid="customer-image"
+            src={customerImageSrc}
+            alt="손님"
+            className="h-20 w-auto object-contain sm:h-24"
+          />
+        </button>
+        {emptyStoragePopKey > 0 && (
+          <span
+            key={emptyStoragePopKey}
+            data-testid="empty-storage-notice"
+            className="text-[10px] text-muted-foreground [animation:judgement-pop_0.8s_ease-out_forwards]"
+          >
+            붕어빵 없음
+          </span>
+        )}
+        <div
+          data-testid="storage-stack"
+          className="flex min-h-6 flex-wrap justify-center gap-1"
+        >
+          {Array.from({ length: collectedCount }).map((_, index) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={index}
+              data-testid="storage-item"
+              src="/assets/bungeoppang/ready.png"
+              alt="완성된 붕어빵"
+              className="h-6 w-auto object-contain"
+            />
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-col gap-2">
         {TRAY_LAYOUT_ROWS.map((row, rowIndex) => (

@@ -10,6 +10,7 @@ type ResultScreenProps = {
   perfectCount: number;
   goodCount: number;
   burntCount: number;
+  failedCount: number;
   maxCombo: number;
   onRestart: () => void;
 };
@@ -21,6 +22,7 @@ export function ResultScreen({
   perfectCount,
   goodCount,
   burntCount,
+  failedCount,
   maxCombo,
   onRestart,
 }: ResultScreenProps) {
@@ -49,6 +51,8 @@ export function ResultScreen({
         <dd>{goodCount}</dd>
         <dt className="text-muted-foreground">BURNT</dt>
         <dd>{burntCount}</dd>
+        <dt className="text-muted-foreground">FAILED</dt>
+        <dd>{failedCount}</dd>
         <dt className="text-muted-foreground">MAX COMBO</dt>
         <dd>x{maxCombo}</dd>
       </dl>

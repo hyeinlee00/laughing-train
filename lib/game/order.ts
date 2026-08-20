@@ -2,35 +2,28 @@ export type Order = {
   quantity: number;
 };
 
-export type SaleQuote = {
-  canSell: boolean;
-  unitsSold: number;
-  hasServiceBonus: boolean;
-  revenue: number;
+export type DeliveryResult = {
+  deliveredCount: number;
+  order: Order;
+  isComplete: boolean;
 };
 
 export const BASE_PRICE = 500;
 export const MIN_ORDER_QUANTITY = 1;
 export const MAX_ORDER_QUANTITY = 4;
+export const FAILURE_PENALTY = 200;
 
-export function quoteSale(order: Order, readyCount: number): SaleQuote {
-  if (readyCount < order.quantity) {
-    return {
-      canSell: false,
-      unitsSold: 0,
-      hasServiceBonus: false,
-      revenue: 0,
-    };
-  }
-
-  const hasServiceBonus = readyCount >= order.quantity + 1;
-  const unitsSold = order.quantity + (hasServiceBonus ? 1 : 0);
+export function deliverToOrder(
+  order: Order,
+  collectedCount: number
+): DeliveryResult {
+  const deliveredCount = Math.min(order.quantity, collectedCount);
+  const remainingQuantity = order.quantity - deliveredCount;
 
   return {
-    canSell: true,
-    unitsSold,
-    hasServiceBonus,
-    revenue: unitsSold * BASE_PRICE,
+    deliveredCount,
+    order: { quantity: remainingQuantity },
+    isComplete: remainingQuantity === 0,
   };
 }
 

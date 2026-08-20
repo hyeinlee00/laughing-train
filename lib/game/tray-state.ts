@@ -40,7 +40,7 @@ export function createEmptyTray(): Tray {
 export function activateTray(
   tray: Tray,
   config: TimingConfig = DEFAULT_TIMING
-): { tray: Tray; judgement?: FlipJudgement } {
+): { tray: Tray; judgement?: FlipJudgement; harvested?: boolean } {
   switch (tray.state) {
     case "EMPTY":
       return { tray: { state: "BATTER", elapsedMs: 0 } };
@@ -67,6 +67,8 @@ export function activateTray(
     }
     case "BURNT":
       return { tray: createEmptyTray() };
+    case "READY":
+      return { tray: createEmptyTray(), harvested: true };
     default:
       return { tray };
   }
