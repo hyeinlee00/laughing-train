@@ -1,0 +1,10 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path id="sparkBig" d="M65,26 C68,46 70,50 90,60 C70,70 68,74 65,94 C62,74 60,70 40,60 C60,50 62,46 65,26 Z"
+        fill="#FFC93C" stroke="#E8941C" stroke-width="2.5" stroke-linejoin="round" />
+  <path id="sparkSmall1" d="M28,72 C29.5,80 30.5,82 40,84 C30.5,86 29.5,88 28,96 C26.5,88 25.5,86 16,84 C25.5,82 26.5,80 28,72 Z"
+        fill="#FFC93C" stroke="#E8941C" stroke-width="2" stroke-linejoin="round" />
+  <path id="sparkSmall2" d="M92,24 C93,29 93.5,30 100,32 C93.5,34 93,35 92,40 C91,35 90.5,34 84,32 C90.5,30 91,29 92,24 Z"
+        fill="#FFC93C" stroke="#E8941C" stroke-width="1.6" stroke-linejoin="round" />
+  <circle cx="50" cy="30" r="2.4" fill="#FFC93C" />
+  <circle cx="95" cy="70" r="2" fill="#FFC93C" />
+</svg>
