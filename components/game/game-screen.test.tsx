@@ -120,6 +120,41 @@ test("60초가 끝나면 결과 화면이 나타나고 다시 굽기로 재시�
   vi.useRealTimers();
 });
 
+test("PERFECT로 콤보가 오르면 콤보 숫자에 팝 애니메이션 클래스가 붙는다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const tray1 = screen.getByTestId("tray-1");
+  fireEvent.click(tray1);
+  act(() => {
+    vi.advanceTimersByTime(2800);
+  });
+  fireEvent.click(tray1); // PERFECT
+
+  const comboNumber = screen.getByTestId("combo-number");
+  expect(comboNumber.className).toMatch(/combo-pop/);
+
+  vi.useRealTimers();
+});
+
+test("붕어빵이 타면 화면에 흔들림 애니메이션 클래스가 붙는다", () => {
+  vi.useFakeTimers();
+  render(<GameScreen />);
+
+  const tray1 = screen.getByTestId("tray-1");
+  fireEvent.click(tray1); // EMPTY -> BATTER, 이후 방치해서 자동으로 탐
+
+  act(() => {
+    // batter(600) + cooking(2200) + goodWindow(1000) + burnGrace(1200) = 5000ms
+    vi.advanceTimersByTime(5000);
+  });
+
+  expect(tray1).toHaveAttribute("data-tray-state", "BURNT");
+  expect(screen.getByTestId("game-screen").className).toMatch(/screen-shake/);
+
+  vi.useRealTimers();
+});
+
 test("완성된 붕어빵이 쌓이면 자동으로 판매되어 매출이 오른다", () => {
   vi.useFakeTimers();
   render(<GameScreen />);

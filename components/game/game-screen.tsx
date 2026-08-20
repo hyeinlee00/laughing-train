@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { TRAY_LAYOUT_ROWS } from "@/lib/game/tray-layout";
 import {
@@ -31,7 +31,10 @@ type GameState = {
   goodCount: number;
   burntCount: number;
   elapsedMs: number;
+  shakeUntilMs: number;
 };
+
+const SHAKE_DURATION_MS = 300;
 
 function createInitialTrays(): Record<number, TrayData> {
   return Object.fromEntries(
@@ -50,6 +53,7 @@ function createInitialState(): GameState {
     goodCount: 0,
     burntCount: 0,
     elapsedMs: 0,
+    shakeUntilMs: 0,
   };
 }
 
@@ -64,6 +68,7 @@ function tickGameState(state: GameState): GameState {
   const nextTrays: Record<number, TrayData> = {};
   let combo = state.combo;
   let burntCount = state.burntCount;
+  let shakeUntilMs = state.shakeUntilMs;
 
   for (const key of TRAY_KEYS) {
     const previousTray = state.trays[key];
@@ -71,6 +76,7 @@ function tickGameState(state: GameState): GameState {
     if (previousTray.state !== "BURNT" && nextTray.state === "BURNT") {
       combo = nextCombo(combo, "BURNT");
       burntCount += 1;
+      shakeUntilMs = elapsedMs + SHAKE_DURATION_MS;
     }
     nextTrays[key] = nextTray;
   }
@@ -81,7 +87,15 @@ function tickGameState(state: GameState): GameState {
   const quote = quoteSale(state.order, readyKeys.length);
 
   if (!quote.canSell) {
-    return { ...state, trays: nextTrays, combo, maxCombo, burntCount, elapsedMs };
+    return {
+      ...state,
+      trays: nextTrays,
+      combo,
+      maxCombo,
+      burntCount,
+      shakeUntilMs,
+      elapsedMs,
+    };
   }
 
   const soldTrays = { ...nextTrays };
@@ -97,6 +111,7 @@ function tickGameState(state: GameState): GameState {
     combo,
     maxCombo,
     burntCount,
+    shakeUntilMs,
     elapsedMs,
   };
 }
@@ -176,7 +191,19 @@ export function GameScreen() {
     goodCount,
     burntCount,
     elapsedMs,
+    shakeUntilMs,
   } = gameState;
+
+  const previousComboRef = useRef(combo);
+  const [comboPopKey, setComboPopKey] = useState(0);
+  useEffect(() => {
+    if (combo > previousComboRef.current) {
+      setComboPopKey((key) => key + 1);
+    }
+    previousComboRef.current = combo;
+  }, [combo]);
+
+  const isShaking = elapsedMs < shakeUntilMs;
   const remainingSeconds = Math.max(
     0,
     Math.ceil((GAME_DURATION_MS - elapsedMs) / 1000)
@@ -198,7 +225,10 @@ export function GameScreen() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
+    <div
+      data-testid="game-screen"
+      className={`flex flex-1 flex-col gap-4 p-4 ${isShaking ? "[animation:screen-shake_0.3s_ease-in-out]" : ""}`}
+    >
       <div className="grid grid-cols-4 gap-2 text-center text-sm sm:text-base">
         <div data-testid="stat-revenue">
           매출
@@ -212,7 +242,13 @@ export function GameScreen() {
         <div data-testid="stat-combo">
           콤보
           <br />
-          x{combo}
+          <span
+            key={comboPopKey}
+            data-testid="combo-number"
+            className="inline-block [animation:combo-pop_0.3s_ease-out]"
+          >
+            x{combo}
+          </span>
         </div>
         <div data-testid="stat-order">
           주문

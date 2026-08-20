@@ -9,7 +9,14 @@ const STATE_LABELS: Record<TrayState, string> = {
   FLIP_READY: "뒤집기!",
   COOKING_2: "마무리 굽는 중",
   READY: "완성!",
-  BURNT: "탄 붕어빵",
+  BURNT: "💨 탄 붕어빵",
+};
+
+const JUDGEMENT_CLASSES: Record<FlipJudgement, string> = {
+  PERFECT: "text-xl font-bold text-orange-600 dark:text-orange-400",
+  GOOD: "text-sm font-bold",
+  EARLY: "text-sm font-bold",
+  LATE: "text-sm font-bold",
 };
 
 const STATE_CLASSES: Record<TrayState, string> = {
@@ -42,14 +49,14 @@ export function Tray({
       data-tray-key={trayKey}
       data-tray-state={state}
       onClick={() => onActivate(trayKey)}
-      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-border text-foreground transition-colors ${STATE_CLASSES[state]}`}
+      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-border text-foreground transition-transform duration-100 active:scale-95 ${STATE_CLASSES[state]}`}
     >
       <span className="text-xs text-muted-foreground">{trayKey}</span>
       <span className="text-sm">{STATE_LABELS[state]}</span>
       {lastJudgement && (
         <span
           data-testid={`tray-${trayKey}-judgement`}
-          className="text-xs font-bold"
+          className={`[animation:judgement-pop_0.8s_ease-out_forwards] ${JUDGEMENT_CLASSES[lastJudgement]}`}
         >
           {lastJudgement}
         </span>
